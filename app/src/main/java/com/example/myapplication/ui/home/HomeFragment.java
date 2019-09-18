@@ -40,6 +40,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private HomeViewModel homeViewModel;
@@ -48,8 +51,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private static final String MAP_VIEW_BUNDLE_KEY = "AIzaSyAs1h8I_2kwCmFkdOeNLDAABuZnSECsuro";
     GoogleMap mMap;
     private static final String[] datas = new String[]{
-            "Afghanistan", "Albania", "Algeria", "Andorra"
     };
+
+    List<PharmacyModel> data;
 
     private static final String URL = "https://medlocator.000webhostapp.com/api/search/available.php?search=";
 
@@ -61,8 +65,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         mapView = root.findViewById(R.id.mapView);
         textView = root.findViewById(R.id.search);
+        data = new ArrayList<>();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, datas);
+        ArrayAdapter<PharmacyModel> adapter = new ArrayAdapter<PharmacyModel>(getContext(), android.R.layout.simple_list_item_1, data);
         textView.setAdapter(adapter);
 
         map(savedInstanceState);
@@ -73,12 +78,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private void loadData(){
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest request = new StringRequest(Request.Method.GET, URL, response -> {
+        StringRequest request = new StringRequest(Request.Method.GET, URL + textView.getText().toString(), response -> {
             try {
-                JSONArray jsonArray = new JSONArray(response);
-                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+                JSONObject object = new JSONObject(response);
+                JSONArray jsonArray = object.getJSONArray("data");
                 for (int i = 0; i < jsonArray.length(); i++) {
+
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                    String pharmacyName = jsonObject.getString("pharmacyName");
+                    String pharmacyId = jsonObject.getString("pharmacyId");
+                    String location = jsonObject.getString("location");
+                    String longitude = jsonObject.getString("longitude");
+                    String latitude = jsonObject.getString("latitude");
+                    //Toast.makeText(getContext(), pharmacyName, pharmacyId, location, , Toast.LENGTH_SHORT).show();
+
+                    PharmacyModel model = new PharmacyModel(pharmacyName, pharmacyId, location, longitude, latitude);
+                    data.add(model);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
