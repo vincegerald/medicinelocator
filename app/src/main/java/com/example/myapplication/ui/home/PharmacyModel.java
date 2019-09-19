@@ -12,13 +12,20 @@ public class PharmacyModel {
 
     private String latitude;
 
+    private String genericName;
 
-    public PharmacyModel(String pharmacyName, String pharmacyId, String location, String longitude, String latitude){
+    private String brandName;
+
+
+
+    public PharmacyModel(String pharmacyName, String pharmacyId, String location, String longitude, String latitude, String genericName,String brandName){
         this.pharmacyName = pharmacyName;
         this.pharmacyId = pharmacyId;
         this.location = location;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.genericName = genericName;
+        this.brandName = brandName;
     }
 
     public String getPharmacyName() {
@@ -59,5 +66,21 @@ public class PharmacyModel {
 
     public void setLatitude(String latitude) {
         this.latitude = latitude;
+    }
+
+    public String getGenericName() {
+        return genericName;
+    }
+
+    public void setGenericName(String genericName) {
+        this.genericName = genericName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 }

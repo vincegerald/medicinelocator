@@ -2,39 +2,62 @@ package com.example.myapplication.ui.medicine;
 
 public class MedicineItem {
 
-    private int image;
+    private String pharmacyName;
 
-    private String title;
+    private String pharmacyId;
 
-    private String description;
+    private String genericName;
 
-    public MedicineItem(int image, String title, String description){
-        this.image = image;
-        this.title = title;
-        this.description = description;
+    private String brandName;
+
+    private String medIndication;
+
+
+    public MedicineItem(String pharmacyName, String pharmacyId, String genericName, String brandName, String medIndication){
+        this.pharmacyName = pharmacyName;
+        this.pharmacyId = pharmacyId;
+        this.genericName = genericName;
+        this.brandName = brandName;
+        this.medIndication = medIndication;
     }
 
-    public int getImage() {
-        return image;
+    public String getPharmacyName() {
+        return pharmacyName;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public void setPharmacyName(String pharmacyName) {
+        this.pharmacyName = pharmacyName;
     }
 
-    public String getTitle() {
-        return title;
+    public String getPharmacyId() {
+        return pharmacyId;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setPharmacyId(String pharmacyId) {
+        this.pharmacyId = pharmacyId;
     }
 
-    public String getDescription() {
-        return description;
+    public String getGenericName() {
+        return genericName;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setGenericName(String genericName) {
+        this.genericName = genericName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String getMedIndication() {
+        return medIndication;
+    }
+
+    public void setMedIndication(String medIndication) {
+        this.medIndication = medIndication;
     }
 }

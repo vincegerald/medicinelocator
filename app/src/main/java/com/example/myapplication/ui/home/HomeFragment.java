@@ -8,13 +8,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -34,6 +37,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -46,16 +50,18 @@ import java.util.List;
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private HomeViewModel homeViewModel;
-    private AutoCompleteTextView textView;
+    private AutoCompleteTextView search;
+    private TextView genericName, brandName, pharmacyName, location;
+    private CardView cardView;
+    private ImageView imageAd;
     private MapView mapView;
     private static final String MAP_VIEW_BUNDLE_KEY = "AIzaSyAs1h8I_2kwCmFkdOeNLDAABuZnSECsuro";
     GoogleMap mMap;
-    private static final String[] datas = new String[]{
-    };
 
-    List<PharmacyModel> data;
+    List<PharmacyModel> pharmacyList;
+    PharmacyModel selected = null;
 
-    private static final String URL = "https://medlocator.000webhostapp.com/api/search/available.php?search=";
+    private static final String URL = "http://medlocator.000webhostapp.com/medlocator/api/search/available.php?search=";
 
 
 
@@ -64,21 +70,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         mapView = root.findViewById(R.id.mapView);
-        textView = root.findViewById(R.id.search);
-        data = new ArrayList<>();
+        search = root.findViewById(R.id.searchText);
+        cardView = root.findViewById(R.id.cardView);
+        genericName = root.findViewById(R.id.genericName);
+        brandName = root.findViewById(R.id.brandName);
+        pharmacyName = root.findViewById(R.id.pharmacyName);
+        imageAd = root.findViewById(R.id.imageAd);
+        location = root.findViewById(R.id.location);
 
-        ArrayAdapter<PharmacyModel> adapter = new ArrayAdapter<PharmacyModel>(getContext(), android.R.layout.simple_list_item_1, data);
-        textView.setAdapter(adapter);
-
+        imageAd.setImageResource(R.mipmap.ads);
+        imageAd.setScaleType(ImageView.ScaleType.FIT_XY);
         map(savedInstanceState);
         loadData();
+
+
         return root;
     }
 
     private void loadData(){
-
+        pharmacyList = new ArrayList<>();
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest request = new StringRequest(Request.Method.GET, URL + textView.getText().toString(), response -> {
+        StringRequest request = new StringRequest(Request.Method.GET, URL, response -> {
             try {
                 JSONObject object = new JSONObject(response);
                 JSONArray jsonArray = object.getJSONArray("data");
@@ -91,11 +103,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     String location = jsonObject.getString("location");
                     String longitude = jsonObject.getString("longitude");
                     String latitude = jsonObject.getString("latitude");
-                    //Toast.makeText(getContext(), pharmacyName, pharmacyId, location, , Toast.LENGTH_SHORT).show();
+                    String genericName = jsonObject.getString("genericName");
+                    String brandName = jsonObject.getString("brandName");
 
-                    PharmacyModel model = new PharmacyModel(pharmacyName, pharmacyId, location, longitude, latitude);
-                    data.add(model);
+                    PharmacyModel model = new PharmacyModel(pharmacyName, pharmacyId, location, longitude, latitude, genericName, brandName);
+                    pharmacyList.add(model);
                 }
+
+                PharmacyAdapter adapter = new PharmacyAdapter(getContext(), pharmacyList);
+                search.setAdapter(adapter);
+                search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        selected = (PharmacyModel) parent.getItemAtPosition(position);
+                        onMapReady(mMap);
+                    }
+                });
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -133,6 +157,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
+        if(mMap != null){
+            mMap.clear();
+        }
         mapView.onResume();
     }
 
@@ -151,22 +178,34 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap map) {
 
+        LatLng ny = new LatLng(10.6840,122.9563);
+        Marker marker = null;
         mMap = map;
         mMap.setMinZoomPreference(12);
 
-        LatLng ny = new LatLng(10.3157, 123.8854);
 
-        mMap.addMarker(new MarkerOptions().position(ny).title("Marker"));
+        if(null != selected){
+            mMap.clear();
+            cardView.setVisibility(View.VISIBLE);
+            genericName.setText(selected.getGenericName());
+            brandName.setText(selected.getBrandName());
+            pharmacyName.setText(selected.getPharmacyName());
+            location.setText(selected.getLocation());
+            ny = new LatLng(Double.parseDouble(selected.getLatitude()), Double.parseDouble(selected.getLongitude()));
+            mMap.addMarker(new MarkerOptions().position(ny).title(selected.getPharmacyName()));
+        }
 
 
 
 
-        UiSettings uiSettings = map.getUiSettings();
-        uiSettings.setIndoorLevelPickerEnabled(true);
-        uiSettings.setMyLocationButtonEnabled(true);
-        uiSettings.setMapToolbarEnabled(true);
-        uiSettings.setCompassEnabled(true);
-        uiSettings.setZoomControlsEnabled(true);
+
+
+//        UiSettings uiSettings = map.getUiSettings();
+//        uiSettings.setIndoorLevelPickerEnabled(true);
+//        uiSettings.setMyLocationButtonEnabled(true);
+//        uiSettings.setMapToolbarEnabled(true);
+//        uiSettings.setCompassEnabled(true);
+//        uiSettings.setZoomControlsEnabled(true);
 
         CameraPosition.Builder camBuilder = CameraPosition.builder();
         camBuilder.bearing(45);

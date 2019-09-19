@@ -3,34 +3,74 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="4dp">
+    app:cardCornerRadius="4dp"
+    android:id="@+id/cardView"
+    android:layout_margin="5dp">
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="4dp">
-
-     <ImageView
-         android:id="@+id/image"
-         android:layout_width="match_parent"
-         android:layout_height="175dp"/>
+        android:layout_margin="4dp"
+        android:padding="10dp">
 
         <TextView
-            android:layout_below="@+id/image"
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="25sp"
             android:text="Title"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textColor="#148282"/>
         <TextView
             android:id="@+id/description"
             android:layout_below="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:text="Description"/>
-        
+            android:textSize="17sp"
+            android:text="Description"
+            android:textColor="#148282"/>
+
+        <TextView
+            android:id="@+id/indication"
+            android:layout_below="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:layout_marginTop="30dp"
+            android:text="Indication: "
+            android:textStyle="bold"
+            android:textColor="#202c33"/>
+
+        <TextView
+            android:id="@+id/desc"
+            android:layout_below="@+id/indication"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:text="Description Here..."
+            android:textColor="#202c33"/>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_below="@+id/desc"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:layout_below="@+id/divider"
+            android:id="@+id/pharmacyName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pharmacy Name"
+            android:layout_marginTop="5dp"
+            android:textColor="#202c33"
+            android:gravity="right"
+            />
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
