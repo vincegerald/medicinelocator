@@ -78,7 +78,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         imageAd = root.findViewById(R.id.imageAd);
         location = root.findViewById(R.id.location);
 
-        imageAd.setImageResource(R.mipmap.ads);
+        imageAd.setImageResource(R.mipmap.ads2);
         imageAd.setScaleType(ImageView.ScaleType.FIT_XY);
         map(savedInstanceState);
         loadData();
